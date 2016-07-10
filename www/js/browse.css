@@ -1,0 +1,19 @@
+/* This is a CSS file */
+.navbar-header{
+    margin-top: 16px;
+    padding-top: 16px;
+
+}
+body{
+    margin-top: 16px;
+    padding-top: 16px;
+    background-color: blue;
+}
+#header_navbar{
+    height: 100px;
+    margin-top: 16px;
+    padding-top: 16px;
+}
+#event-list{
+    background-color: blue;
+}
