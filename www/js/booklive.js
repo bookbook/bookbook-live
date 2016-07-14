@@ -13,17 +13,15 @@ var oauth = OAuth({
 
 $(function() {
     
-    $("#connect").on("click", function(){
-        connect();
-    })
+//    var aaa = window.open("https://bookbook-live.appspot.com", '_self', 'location=no,presentationstyle=fullscreen,toolbar=no')
+    window.open("https://bookbook-live.appspot.com", '_self', 'location=yes')
     
-    loadSchedule();
     
 
 })
 
 function openbr() {
-    var aaa = window.open("https://bookbook-live.appspot.com", '_blank', 'location=no,presentationstyle=fullscreen,toolbar=no')
+    var aaa = window.open("https://bookbook-live.appspot.com", '_target', 'location=no,presentationstyle=fullscreen,toolbar=no')
 //    aaa.addEventListener('loadstop', function() {
 //        aaa.insertCSS({file: "browse.css"});
 //    });
