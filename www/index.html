@@ -6,45 +6,20 @@
     <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
     
     <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="css/jquery.mobile.structure-1.4.5.min.css">
     <link rel="stylesheet" href="css/booklive.css">
     
 </head>
 <body>
-<div id="schedule" data-role="page">
-    <!-- ヘッダー -->
-	<div data-role="header" data-position="fixed" style="margin-top:16px;">
-        <h2>BookLive</h2>
-        <a href="#menu_panel" class="ui-btn ui-icon-bars ui-btn-icon-notext" ref="menu">Menu</a>
-    </div>
-    <!--コンテンツ-->
-    <div data-role="content", data-theme="c" id="view_content">
-        <div id="event_list">
-        <button id="connect">Connect to Twitter</button>
-         <!--<button onclick="openbr();" class="button--large">Open BoolLive</button>
-        </div>-->
-    </div>
-    <!-- フッター -->
-    <div data-role="footer" data-position="fixed">
-        <div data-role="navbar">
-            <ul>
-                <li><a href="#" data-icon="home" class="ui-btn-active">スケジュール</a></li>
-                <li><a href="#" data-icon="bullets">タイムライン</a></li>
-                <li><a href="#" data-icon="plus">イベント作成</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
 
-<div id="btnLogin">
-  <button onclick="connect();" class="button--large">Connect to Twitter</button>
+<div id="btnOpen">
+  <button onclick="openBookLive();">読込中...</button>
 </div>
 
 <!--javascript-->
 <script src="components/loader.js"></script>
 <script src="js/jquery-1.12.3.min.js"></script>
 <script src="js/jquery.mobile-1.4.5.min.js"></script>
-<script src="js/jsOAuth-1.3.7.min.js"></script>
 <script src="js/booklive.js"></script>
-
 </body>
 </html>
