@@ -4,22 +4,142 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
-    
+
     <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
-    <link rel="stylesheet" href="css/jquery.mobile.structure-1.4.5.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/booklive.css">
     
 </head>
 <body>
 
-<div id="btnOpen">
-  <button onclick="openBookLive();">読込中...</button>
+<!--スケジュール-->
+<div data-role="page" id="schedule_page">
+    <!--ヘッダー-->
+    <div data-role="header" data-position="fixed" id="header" data-tap-toggle="false">
+        <a href="#menu" class="ui-btn ui-corner-all ui-icon-user ui-btn-icon-notext">メニュー</a>
+		<h1><b>スケジュール</b></h1>
+        <a href="" class="ui-btn ui-corner-all ui-icon-action ui-btn-icon-notext">投稿</a>
+    </div>
+    <!--コンテンツ-->
+    <div role="main" class="ui-content" id="content">
+        <div id="schedule">
+        </div>
+    </div>
+    <!--フッター-->
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+        <div data-role="navbar" id="navbar">
+        <ul>
+            <li><a href="#schedule_page" data-transition="none" data-icon="home">スケジュール</a></li>
+            <li><a href="#timeline_page" data-transition="none" data-icon="bullets">タイムライン</a></li>
+            <li><a href="#favorite_page" data-transition="none" data-icon="star">お気に入り</a></li>
+        </ul>
+        </div>
+    </div>
+    
+    <!--メニュー-->
+    <div data-role="panel" data-theme="b" data-position-fixed="true" id="menu">
+        <ul data-role="listview">
+            <li data-rel="close">閉じる</li>
+            <li ref="stream"><a href="">フォローユーザ</a></li>
+            <li ref="#group_view"><a href="">過去のイベント</a></li>
+            <li ref="#group_view"><a href="">背景画像の設定</a></li>
+        	<li ref="#private"><a href="">ログアウト</a></li>
+            <li data-role="list-divider">　</li>
+            <li ref="#private"><a href="">退会</a></li>
+
+        </ul>
+    </div>
+
+    <!--ログイン確認ポップアップ-->
+    <div data-role="popup" data-dismissible="false" id="login">
+        <p>使用にはTwitterアカウントが必要です</p>
+        <button onclick="connect();" class="ui-btn ui-corner-all" id="login_btn">Twitterでログイン</button>
+
+    </div>
+</div>
+
+
+<!--タイムライン-->
+<div data-role="page" id="timeline_page">
+    <!--ヘッダー-->
+    <div data-role="header" data-position="fixed" id="header" data-tap-toggle="false">
+        <a href="#timeline_menu" class="ui-btn ui-corner-all ui-icon-user ui-btn-icon-notext">メニュー</a>
+    	<h1>タイムライン</h1>
+    </div>
+    <!--コンテンツ-->
+    <div role="main" class="ui-content" id="content">
+        <div id="timeline">
+        </div>
+    </div>
+    <!--フッター-->
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+        <div data-role="navbar" id="navbar">
+        <ul>
+            <li><a href="#schedule_page" data-transition="none" data-icon="home">スケジュール</a></li>
+            <li><a href="#timeline_page" data-transition="none" data-icon="bullets">タイムライン</a></li>
+            <li><a href="#favorite_page" data-transition="none" data-icon="star">お気に入り</a></li>
+        </ul>
+        </div>
+    </div>
+    
+    <!--メニュー-->
+    <div data-role="panel" data-theme="b" data-position-fixed="true" id="timeline_menu">
+        <ul data-role="listview">
+            <li data-rel="close">閉じる</li>
+            <li ref="stream"><a href="">フォローユーザ</a></li>
+            <li ref="#group_view"><a href="">過去のイベント</a></li>
+            <li ref="#group_view"><a href="">背景画像の設定</a></li>
+        	<li ref="#private"><a href="">ログアウト</a></li>
+            <li data-role="list-divider">　</li>
+            <li ref="#private"><a href="">退会</a></li>
+
+        </ul>
+    </div>
+</div>
+
+<!--お気に入り-->
+<div data-role="page" id="favorite_page">
+    <!--ヘッダー-->
+    <div data-role="header" data-position="fixed" id="header" data-tap-toggle="false">
+        <a href="#favorite_menu" class="ui-btn ui-corner-all ui-icon-user ui-btn-icon-notext">メニュー</a>
+        <h1>お気に入り</h1>
+    </div>
+    <!--コンテンツ-->
+    <div role="main" class="ui-content" id="content">
+        <div id="favorite">
+        </div>
+    </div>
+    <!--フッター-->
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+        <div data-role="navbar" id="navbar">
+        <ul>
+            <li><a href="#schedule_page" data-transition="none" data-icon="home">スケジュール</a></li>
+            <li><a href="#timeline_page" data-transition="none" data-icon="bullets">タイムライン</a></li>
+            <li><a href="#favorite_page" data-transition="none" data-icon="star">お気に入り</a></li>
+        </ul>
+        </div>
+    </div>
+    
+    <!--メニュー-->
+    <div data-role="panel" data-theme="b" data-position-fixed="true" id="timeline_menu">
+        <ul data-role="listview">
+            <li data-rel="close">閉じる</li>
+            <li ref="stream"><a href="">フォローユーザ</a></li>
+            <li ref="#group_view"><a href="">過去のイベント</a></li>
+            <li ref="#group_view"><a href="">背景画像の設定</a></li>
+        	<li ref="#private"><a href="">ログアウト</a></li>
+            <li data-role="list-divider">　</li>
+            <li ref="#private"><a href="">退会</a></li>
+
+        </ul>
+    </div>
 </div>
 
 <!--javascript-->
 <script src="components/loader.js"></script>
 <script src="js/jquery-1.12.3.min.js"></script>
 <script src="js/jquery.mobile-1.4.5.min.js"></script>
+<script src="js/jsOAuth-1.3.7.min.js"></script>
 <script src="js/booklive.js"></script>
 </body>
 </html>
