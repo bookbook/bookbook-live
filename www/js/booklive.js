@@ -1,15 +1,12 @@
 
 function loadEvent(arg){
-    alert(arg)
     $.get(
         'https://bookbook-live.appspot.com/api/get_events',
 		{'arg' : arg},
 		function(data){
 			$('#'+arg).html($(data).filter("#events").html());
 			$('#'+arg+'_cursor').html($(data).filter("#cursor").html());
-            
-            alert("return:"+data);
-            
+                        
             //追加ボタンのcss処理
             $(".add:contains('-')").css('color', 'gray')
             $(".add:contains('+')").css('color', 'dodgerblue')
@@ -43,11 +40,24 @@ $(function(){
     )
 });
 
+
+function twitter_connect() {
+    var browser = window.open('https://bookbook-live.appspot.com/twitter_aouth', '_blank', 'location=yes');
+    browser.addEventListener('loadstart', function(event) {
+        if (event.url == 'https://bookbook-live.appspot.com') {
+            $("#login").popup("close");
+            loadEvent('schedule');
+            browser.close();
+        }
+    });
+
+}
+
 //jsOauthの設定
-var callbackUrl = "https://bookbook-live.appspot.com";
+var callbackUrl = "https://bookbook-live.appspot.com/twitter_callback";
 var oauth = OAuth({
-    consumerKey: "JwNiIBGN3TvGNFSjOacaAwr16",
-    consumerSecret: "8dipQUFo74WED4UJFreR0F4lcFnlQgRsGn76PVd9ItzVCjg3bE",
+    consumerKey: "VqPKanuHnMhj3zhnElWX3EQNR",
+    consumerSecret: "XdToFZS01cKk20yWjwx86wMgP5gPtYGOwKglffiZ8zV32J0rdu",
     callbackUrl: callbackUrl,
     requestTokenUrl: "https://api.twitter.com/oauth/request_token",
     authorizationUrl: "https://api.twitter.com/oauth/authorize",
@@ -62,21 +72,17 @@ function connect() {
     });
 }
 function showAuthWindow(url) {
-  var browser = window.open(url, '_blank', 'location=yes');
-  browser.addEventListener('loadstart', function(event) {
-    if (event.url.indexOf(callbackUrl) >= 0) {
-      event.url.match(/oauth_verifier=([a-zA-Z0-9]+)/);
-      oauth.setVerifier(RegExp.$1);
-      oauth.fetchAccessToken(function (data) {
-        $("#login").popup("close");
-        loadEvent('schedule');
-        browser.close();
-        
-      }, function (data) {
-        console.log(JSON.stringify(data));
-      });
-    }
-  });
+    var browser = window.open(url, '_blank', 'location=yes');
+    browser.addEventListener('loadstart', function(event) {
+        if (event.url.indexOf(callbackUrl) >= 0) {
+            event.url.match(/oauth_verifier=([a-zA-Z0-9]+)/);
+            oauth.setVerifier(RegExp.$1);
+    
+//            $("#login").popup("close");
+//            loadEvent('schedule');
+//            browser.close();
+        }
+    });
 }
 
 

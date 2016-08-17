@@ -2,25 +2,11 @@
 /*ヘッダ*/
 #header{
     /*margin-top: 20px;*/
-    height: 42px;
     border: none;
     background-color: #f6f6f6;
-
 }
 #header h1{
     color: dodgerblue;
-    font-size: 16px;
-    margin-top: 2px;
-}
-.ui-icon-user {
-    background-image: url('user.png');
-    width:32px;
-    height: 32px;
-}
-.ui-icon-action {
-    background-image: url('action.png');
-    width:32px;
-    height: 32px;
 }
 #content{
     /*margin-top: 16px;*/
