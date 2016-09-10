@@ -1,18 +1,59 @@
 
+/*ヘッダとフッタを避ける*/
+body {
+  padding-top: 76px;
+  padding-bottom: 60px;
+}
+
+/*modalをスクロール可能にする設定*/
+.modal {
+    overflow-y: auto;
+	max-height: 100%;
+}
+
+/*モーダルの位置をセンターに*/
+.modal-dialog-center {
+  padding-top: 40%;
+}
+
+/*modal上でtimepickerを動かすための設定（必要）*/
+.bootstrap-timepicker-widget{
+	z-index: 1050!important;
+}
+
 /*ヘッダ*/
-#header{
-    /*margin-top: 20px;*/
-    border: none;
+#header_navbar{
+    padding-top: 16px;
+}
+#logo{
+    color: dodgerblue;
+	font-weight: bold;
+}
+#plus_btn{
+    font-size: 12px;
+}
+#navbar_contents{
+    padding: 10px 10px 0px;
+}
+/*フッタメニュー*/
+#footer{
+    color: #808080;
+    border: 1px solid #dcdcdc;
     background-color: #f6f6f6;
 }
-#header h1{
+.col-xs-3{   
+    font-size: 11px;
+    padding: 8px 0px;
+}
+#footer_row{
+    font-weight: bold;
+    text-align: center;
+}
+#footer_row span{
+    font-size: 18px;
+}
+#menu_schedule{
     color: dodgerblue;
-}
-#content{
-    /*margin-top: 16px;*/
-    background-color: white;
-}
-#footer{
 }
 
 /*ログインポップアップ*/
@@ -25,11 +66,63 @@
     text-decoration: none;
 }
 
-/*設定メニュー*/
-#menu{
-    /*margin-top: 20px;*/
+/*コンテンツ*/
+#contents{
+    margin: 0px 10px;
 }
-/*event*/
+
+/*設定ページ*/
+.menu_title{
+    background-color: #333333;
+    color: white;
+    font-weight: bold;
+}
+
+#loading{
+    position:absolute;
+	left:50%;
+	top:30%;
+	margin-left:-20px;
+}
+
+/*イベント登録/編集モーダル*/
+.date_input{
+    font-size: 16px;
+}
+.date_determined{
+	margin: 0px;
+	vertical-align: middle;
+}
+.date_determined_label{
+	font-weight: normal!important;
+	margin: 0px;
+	vertical-align: middle;
+}
+.time_input_group td{
+}
+.time_input_bar{
+	width: 1em;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.time_input{
+	font-size: 16px;
+}
+.start_time_input{
+	font-size: 16px;
+}
+.title_input{
+	font-size: 16px;
+}
+.text_input{
+	font-size: 16px;
+}
+
+/*イベントリスト*/
+.border{
+    border-bottom: 1px solid lightgrey;
+    clear: both;
+}
 .event{
     border-bottom: 1px solid lightgrey;
 	padding-top: 5px;
@@ -56,10 +149,20 @@
 	font-size: 14px;
 	word-wrap: break-word;
 }
+.rank{
+    color: #333333;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px dashed silver;
+    margin-top: 5px;
+}
 .action_div{
 	width: 55px;
 } 
 .share{
+    color: gray;
 	font-size: 12px;
 	cursor:pointer;
 }
@@ -68,11 +171,11 @@
 	cursor:pointer;
 }
 .fav{
+    color: gray;
 	cursor:pointer; 
 }
 .del{
 	color: gray;
-	/*margin-right: 80px;*/
 	cursor:pointer;
 }
 .edit{
@@ -104,4 +207,104 @@
 	clear: both;
 	border-bottom: 1px dashed silver;
 	height: 5px;
+}
+
+/*イベント単体表示*/
+.list_title_icon{
+    float: left;
+}
+.list_title_name{
+	float: left;
+	overflow: hidden;
+}
+.list_title_username{
+	font-size: 14px;
+	font-weight: bold;
+	margin-left: 5px;
+	line-height: 14px;
+}
+.list_title_screenname{
+	font-size: 12px;
+	color: gray;
+	margin-left: 5px;
+	line-height: 5px;
+}
+.list_title_btn{
+	float: right;
+}
+.list_title_clear{
+	clear: both;
+	padding-top: 5px;
+	border: 0px;
+}
+#title_schedule{
+	float: left;
+}
+#title_tweet_btn{
+	float: right;
+}
+#event_participants{
+    padding-top: 5px;
+}
+
+#num_participants{
+	font-size: 12px;
+	padding-top: 9px;
+}
+.participants_icon{
+	float: left;
+}
+.participants_icon img{
+	height: 32px;
+}
+.participants_name{
+	cursor: pointer;
+	float: left;
+	padding-left: 5px;
+}
+.participants_username{
+	font-size: 12px;
+	font-weight: bold;
+}
+.participants_screenname{
+	font-size: 12px;
+	color: gray;
+	line-height: 10px;
+	display: block;
+}
+.participants_follow{
+	text-align: right;
+	font-size: 12px;
+	line-height: 1.5;
+}
+#event_tweetbtn{
+    padding-top: 8px;
+	float: right;
+}
+.event_footer_clear{
+	clear: both;
+	border: 0px;
+}
+
+/*フォローページ*/
+
+/*follow page*/
+.follow{
+    margin-top: 10px;
+	margin-bottom: 5px;
+}
+.list_title_name{
+	cursor:pointer;
+}
+.follow_li{
+	float: left;
+}
+.follow_li_btn{
+	float: right;
+}
+.follow_border{
+	clear: both;
+	width: 100%;
+	border-bottom: 1px solid lightgrey;
+    height: 10px;
 }

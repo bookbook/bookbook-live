@@ -5,141 +5,304 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
 
-    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
-    <!--<link rel="stylesheet" href="css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-datepicker.min.css">
+	<link rel="stylesheet" href="css/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="css/bootstrap-select.min.css"/>
     <link rel="stylesheet" href="css/booklive.css">
-    
+
 </head>
 <body>
 
-<!--スケジュール-->
-<div data-role="page" id="schedule_page">
-    <!--ヘッダー-->
-    <div data-role="header" data-position="fixed" id="header" data-tap-toggle="false">
-        <a href="#menu" class="ui-btn ui-corner-all ui-icon-user ui-btn-icon-notext">メニュー</a>
-		<h1><b>スケジュール</b></h1>
-        <a href="" class="ui-btn ui-corner-all ui-icon-action ui-btn-icon-notext">投稿</a>
+<!--ロード画像-->
+<div id="loading"><img src="img/load.gif"></div>
+
+<!--ヘッダ-->
+<nav class="navbar navbar-default navbar-fixed-top" id="header_navbar">
+    <div id="navbar_menu" class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" id="plus_btn">
+    		    <span class="glyphicon glyphicon-plus" aria-hidden="true"><b>追加</b></span>   
+			</button>
+			<a class="navbar-brand" id="logo" href="/">
+				<b>BookLive</b>
+			</a>
+		</div>
+	</div>
+    <div id='navbar_contents'>
     </div>
-    <!--コンテンツ-->
-    <div role="main" class="ui-content" id="content">
-        <div id="schedule">
-        </div>
+</nav>
+<!--コンテンツ-->
+<div id="contents">
+    <!--スケジュール-->
+    <div id="schedule" loaded="false">
     </div>
-    <!--フッター-->
-    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
-        <div data-role="navbar" id="navbar">
-        <ul>
-            <li><a href="#schedule_page" data-transition="none" data-icon="home">スケジュール</a></li>
-            <li><a href="#timeline_page" data-transition="none" data-icon="bullets">タイムライン</a></li>
-            <li><a href="#favorite_page" data-transition="none" data-icon="star">お気に入り</a></li>
+    <!--ユーザースケジュール-->
+    <div id="user_schedule" loaded="false">
+    </div>
+    <!--ユーザータイムライン-->
+    <div id="timeline" loaded="false">
+    </div>
+    <!--ランキング-->
+    <div id="ranking" loaded="false">
+    </div>
+    <!--お気に入り-->
+    <div id="favorite" loaded="false">
+    </div>
+    <!--イベント単体表示-->
+    <div id="event">
+    </div>
+    <!--フォロー/フォロワー-->
+    <div id="follow">
+    </div>
+    <!--過去のイベント-->
+    <div id="past">
+    </div>
+    <!--設定メニュー-->
+    <div id="settings" style="display:none">
+        <ul class="list-group">
+            <li class="list-group-item menu_title">メニュー</li>
+            <li class="list-group-item" id="menu_myschedule" user="">
+                マイスケジュール
+            </li>
+            <li class="list-group-item" id="menu_favorite">
+                お気に入り        
+            </li>
+        	<li class="list-group-item" id="menu_follow">
+                フォローユーザ
+            </li>
+        	<li class="list-group-item" id="menu_prev_events">
+                過去のイベント
+            </li>
         </ul>
-        </div>
-    </div>
-    
-    <!--メニュー-->
-    <div data-role="panel" data-theme="b" data-position-fixed="true" id="menu">
-        <ul data-role="listview">
-            <li data-rel="close">閉じる</li>
-            <li ref="stream"><a href="">フォローユーザ</a></li>
-            <li ref="#group_view"><a href="">過去のイベント</a></li>
-            <li ref="#group_view"><a href="">背景画像の設定</a></li>
-        	<li ref="#private"><a href="">ログアウト</a></li>
-            <li data-role="list-divider">　</li>
-            <li ref="#private"><a href="">退会</a></li>
-
-        </ul>
-    </div>
-
-    <!--ログイン確認ポップアップ-->
-    <div data-role="popup" data-dismissible="false" id="login">
-        <p>使用にはTwitterアカウントが必要です</p>
-        <button onclick="twitter_connect();" class="ui-btn ui-corner-all" id="login_btn">Twitterでログイン</button>
-
-    </div>
-</div>
-
-
-<!--タイムライン-->
-<div data-role="page" id="timeline_page">
-    <!--ヘッダー-->
-    <div data-role="header" data-position="fixed" id="header" data-tap-toggle="false">
-        <a href="#timeline_menu" class="ui-btn ui-corner-all ui-icon-user ui-btn-icon-notext">メニュー</a>
-    	<h1>タイムライン</h1>
-    </div>
-    <!--コンテンツ-->
-    <div role="main" class="ui-content" id="content">
-        <div id="timeline">
-        </div>
-    </div>
-    <!--フッター-->
-    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
-        <div data-role="navbar" id="navbar">
-        <ul>
-            <li><a href="#schedule_page" data-transition="none" data-icon="home">スケジュール</a></li>
-            <li><a href="#timeline_page" data-transition="none" data-icon="bullets">タイムライン</a></li>
-            <li><a href="#favorite_page" data-transition="none" data-icon="star">お気に入り</a></li>
-        </ul>
-        </div>
-    </div>
-    
-    <!--メニュー-->
-    <div data-role="panel" data-theme="b" data-position-fixed="true" id="timeline_menu">
-        <ul data-role="listview">
-            <li data-rel="close">閉じる</li>
-            <li ref="stream"><a href="">フォローユーザ</a></li>
-            <li ref="#group_view"><a href="">過去のイベント</a></li>
-            <li ref="#group_view"><a href="">背景画像の設定</a></li>
-        	<li ref="#private"><a href="">ログアウト</a></li>
-            <li data-role="list-divider">　</li>
-            <li ref="#private"><a href="">退会</a></li>
-
+        <ul class="list-group">
+            <li class="list-group-item menu_title">設定</li>
+            <li class="list-group-item">
+                運営用アカウントを使用
+                <span style="float:right"><input id="account_type_input" type="checkbox" value="1" ></span>        
+            </li>
+            <li class="list-group-item" id="menu_logout">
+                <a href="" data-toggle="modal" data-target="#login_modal">ログイン</a>
+            </li>
+            <li class="list-group-item" id="menu_logout">
+                <a href="" data-toggle="modal" data-target="#logout_modal">ログアウト</a>
+            </li>
         </ul>
     </div>
 </div>
 
-<!--お気に入り-->
-<div data-role="page" id="favorite_page">
-    <!--ヘッダー-->
-    <div data-role="header" data-position="fixed" id="header" data-tap-toggle="false">
-        <a href="#favorite_menu" class="ui-btn ui-corner-all ui-icon-user ui-btn-icon-notext">メニュー</a>
-        <h1>お気に入り</h1>
-    </div>
-    <!--コンテンツ-->
-    <div role="main" class="ui-content" id="content">
-        <div id="favorite">
-        </div>
-    </div>
-    <!--フッター-->
-    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
-        <div data-role="navbar" id="navbar">
-        <ul>
-            <li><a href="#schedule_page" data-transition="none" data-icon="home">スケジュール</a></li>
-            <li><a href="#timeline_page" data-transition="none" data-icon="bullets">タイムライン</a></li>
-            <li><a href="#favorite_page" data-transition="none" data-icon="star">お気に入り</a></li>
-        </ul>
-        </div>
-    </div>
-    
-    <!--メニュー-->
-    <div data-role="panel" data-theme="b" data-position-fixed="true" id="timeline_menu">
-        <ul data-role="listview">
-            <li data-rel="close">閉じる</li>
-            <li ref="stream"><a href="">フォローユーザ</a></li>
-            <li ref="#group_view"><a href="">過去のイベント</a></li>
-            <li ref="#group_view"><a href="">背景画像の設定</a></li>
-        	<li ref="#private"><a href="">ログアウト</a></li>
-            <li data-role="list-divider">　</li>
-            <li ref="#private"><a href="">退会</a></li>
+<!-- イベント登録/編集モーダル -->
+<div class="modal fade" id="input_event_modal" tabindex="-1">
+    <div class="modal-dialog">
+		<div class="modal-content">
+			<!-- ヘッダ -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+				<h4 class="modal-title">
+					<span id="modal_title_reg">イベントの登録</span>
+					<span id="modal_title_edit">イベントの編集</span>
+				</h4>
+			</div>
+            <!--共通フォーム-->
+            <div class="form-group">
+				<input id="input_event_mode" type="hidden" value="reg" />
+				<input id="input_event_key" type="hidden" value="" />
+            </div>
+			
+            <!-- 一般用フォーム -->
+			<div class="modal-body" id="input_form_0">
+				<div class="form-group">
+					<label for="date_input_0" class="control-label">日付</label>
+					<input type="text" class="form-control date_input" id="date_input_0" readonly="readonly">
+					<br>
+					<label for="time_input_0" class="control-label">時刻</label>
+					<div class="input-group bootstrap-timepicker timepicker">
+						<input id="time_input_0" type="text" class="form-control input-small time_input" readonly="readonly">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+					</div>
+					<br>
+					<label for="title_input_0" class="control-label">イベント名</label>
+					<input type="text" class="form-control title_input" id="title_input_0">
+					<br>
+					<label for="text_input_0" class="control-label">内容</label>
+					<textarea rows="5" class="form-control text_input" id="text_input_0"></textarea>
+				</div>
+			</div>
+            
+    		<!-- 運営用フォーム -->
+			<div class="modal-body" id="input_form_1">
+				<div class="form-group">
+					<label for="event_type_edit" class="control-label">イベントの種類</label>
+					<select class="selectpicker event_type_input" id="event_type_input">
+						<option value="1">ライブイベント</option>
+						<option value="2">ライブイベント（開始時刻のみ）</option>
+						<option value="3">リリース（時刻設定なし）</option>
+					</select>
+					<br>
+					<br>
+					<label for="date" class="control-label">日付</label>
+					<input id="date_input" type="text" class="form-control date_input" readonly="readonly">
+					<br>
+					<label for="time_input_group" class="control-label">開場 / 開演時間</label>
+					<table class="time_input_group">
+						<tr>
+							<td id="td_time_input">
+								<div class="input-group bootstrap-timepicker timepicker">
+									<input id="time_input" type="text" class="form-control input-small time_input" readonly="readonly">
+									<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+								</div>
+							</td>
+							<td class="time_input_bar">/</td>
+							<td id="td_start_time_input">
+								<div class="input-group bootstrap-timepicker timepicker">
+									<input id="start_time_input" type="text" class="form-control input-small time_input" readonly="readonly">
+									<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<br>
+					<div class="input-group">
+						<input id="date_determined_input" type="checkbox" class="date_determined">
+						<label for="date_determined_input" class="date_determined_label"> 日時に（予定）を表示する</label>
+					</div>
+					<br>
+					<label for="title_input" class="control-label">イベント名</label>
+					<input id="title_input" type="text" class="form-control title-input">
+					<br>
+					<label for="text_input" class="control-label">内容</label>
+					<textarea rows="5" class="form-control text-input" id="text_input"></textarea>
+				</div>
+			</div>
+			<!-- フッター -->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" id="input_event_submit">
+					<span id="modal_submit_reg">　登録　</span><span id="modal_submit_edit">　変更　</span>　
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
 
-        </ul>
-    </div>
+<!-- イベントを自分の予定に追加 -->
+<div class="modal fade modal-dialog-center" id="add_event" tabindex="-1">
+    <div class="modal-dialog">
+		<div class="modal-content">
+			<!-- ヘッダ -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+				<h4 class="modal-title" id="add_modal_title">イベントを追加</h4>
+			</div>
+			<!-- 本体 -->
+			<div class="modal-body">
+				<p id="add_modal_body">イベントを自分の予定に追加しますか？</p>
+				<input id="add_event_key" type="hidden" value="" />
+				<input id="add_event_arg" type="hidden" value="" />
+			</div>
+			<!-- フッター -->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+				<button type="button" class="btn btn-primary" id="add_event_submit">　追加　</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- イベント削除モーダル -->
+<div class="modal fade modal-dialog-center" id="del_event" tabindex="-1">
+    <div class="modal-dialog">
+		<div class="modal-content">
+			<!-- ヘッダ -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+				<h4 class="modal-title">イベントの削除</h4>
+			</div>
+			<!-- 本体 -->
+			<div class="modal-body">
+				<p>イベントを削除しますか？</p>
+				<input id="del_event_key" type="hidden" value="" />
+			</div>
+			<!-- フッター -->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+				<button type="button" class="btn btn-primary" id="del_event_submit">　削除　</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--ログインモーダル-->
+<div class="modal fade modal-dialog-center" id="login_modal" tabindex="-1">
+    <div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">ログイン</h4>
+			</div>
+			<div class="modal-body">
+				Twitterアカウントを利用してログインします
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="twitter_connect();">Twitterでログイン</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ログアウトモーダル -->
+<div class="modal fade modal-dialog-center" id="logout_modal" tabindex="-1">
+    <div class="modal-dialog">
+		<div class="modal-content">
+			<!-- ヘッダ -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+				<h4 class="modal-title">ログアウトの確認</h4>
+			</div>
+			<!-- 本体 -->
+			<div class="modal-body">
+				<p>ログアウトしますか？</p>
+			</div>
+			<!-- フッター -->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+				<button type="button" class="btn btn-primary" id="logout_submit">　ログアウト　</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--フッタ-->
+<div class="container navbar-fixed-bottom" id="footer">
+    <div class="row" id="footer_row">
+		<div class="col-xs-3" id="menu_schedule">
+            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+            <br>スケジュール
+        </div>
+		<div class="col-xs-3" id="menu_timeline">
+            <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+            <br>タイムライン
+        </div>
+		<div class="col-xs-3" id="menu_ranking">
+            <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
+            <br>ランキング
+        </div>
+        <div class="col-xs-3" id="menu_settings">
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+            <br>設定
+        </div>
+	</div>
 </div>
 
 <!--javascript-->
 <script src="components/loader.js"></script>
 <script src="js/jquery-1.12.3.min.js"></script>
-<script src="js/jquery.mobile-1.4.5.min.js"></script>
-<script src="js/jsOAuth-1.3.7.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.touchSwipe.min.js"></script>
+<script src="js/bootstrap-datepicker.min.js"></script>
+<script src="js/bootstrap-datepicker.ja.min.js"></script>
+<script src="js/bootstrap-timepicker.js"></script>
+<script src="js/bootstrap-select.min.js"></script>
 <script src="js/booklive.js"></script>
 </body>
 </html>
