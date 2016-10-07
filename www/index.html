@@ -62,11 +62,10 @@
     <!--イベント単体表示-->
     <div id="event"></div>
     <!--フォロー/フォロワー-->
-    <div id="follow">
-    </div>
+    <div id="follow"></div>
     <!--過去のイベント-->
-    <div id="past">
-    </div>
+    <div id="past"></div>
+    <div id="past_cursor" style="display:none"></div>
     <!--設定メニュー-->
     <div id="settings" style="display:none">
         <ul class="list-group">
@@ -80,7 +79,7 @@
         	<li class="list-group-item" id="menu_follow">
                 フォローユーザ
             </li>
-        	<li class="list-group-item" id="menu_prev_events">
+        	<li class="list-group-item" id="menu_past_events">
                 過去のイベント
             </li>
         </ul>
@@ -131,12 +130,12 @@
 </div>
 
 <!-- イベント登録/編集モーダル -->
-<div class="modal fade" data-backdrop="static" id="input_event_modal" tabindex="-1">
+<div class="modal modal-top fade" data-backdrop="static" id="input_event_modal" tabindex="-1">
     <div class="modal-dialog">
 		<div class="modal-content">
 			<!-- ヘッダ -->
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+				<button type="button" class="close" data-dismiss="modal"><span> × </span></button>
 				<h4 class="modal-title">
 					<span id="modal_title_reg">イベントの登録</span>
 					<span id="modal_title_edit">イベントの編集</span>

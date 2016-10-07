@@ -4,11 +4,14 @@ $(function(){
 
     var current_scrollY;
     var touchst;
+    var touchmv;
     var touchen;
     var currentPage;
     var user_schedule_name="";
     
     reloadEvents();
+
+//    StatusBar.styleDefault();
     
     //１．初期化処理
     //ログインされていなければログインへ誘導
@@ -350,24 +353,20 @@ $(function(){
     //スケジュールページ
     $("#contents").on('click', '#menu_myschedule', function(){
         user_name = $("#menu_myschedule").attr("user");
-        loadUserSchedule(user_name);
+        showPage('user_schedule', user_name);
     });
     //お気に入り
     $("#contents").on('click', '#menu_favorite', function(){
-        loadEvent('favorite');
+        showPage('favorite');
     });
-
     //フォローリスト
     $("#contents").on('click', '#menu_follow', function(){
-        loadEvent('follow');
-        $('#plus_btn').hide();
+        showPage('follow');
     });
-    
     //過去のイベント
-    $("#contents").on('click', '#menu_prev_events', function(){
-        loadEvent('past');
+    $("#contents").on('click', '#menu_past_events', function(){
+        showPage('past');
     });
-    
     
     //１１．設定
     //アカウントタイプの変更
@@ -394,10 +393,8 @@ $(function(){
     });
 });
 
-//フッタメニューの選択処理
-//選択したメニューに色を付ける
+//選択したフッタメニューに色を付ける
 function selectFooterMenu(arg){
-//    alert("selectFooterMenu:"+arg);
     $("#menu_schedule").css('color','#808080');
     $("#menu_timeline").css('color','#808080');
     $("#menu_ranking").css('color','#808080');
@@ -410,10 +407,10 @@ function selectFooterMenu(arg){
 //Twitterログインの処理
 function twitter_connect() {
     var browser = window.open('https://bookbook-live.appspot.com/twitter_aouth', '_blank', 'location=yes');
-    browser.addEventListener('loadstop', function(event) {
+    browser.addEventListener('loadstart', function(event) {
         if (event.url == 'https://bookbook-live.appspot.com/') {
             $("#login_modal").modal("hide");
-            loadEvent('schedule');
+            showPage('schedule');
             browser.close();
         }
     });
@@ -433,9 +430,8 @@ function twitter_logout(){
 
 //退会処理
 function withdraw(){
-    
+    console.log('withdraw');
     $("#withdraw_modal").modal("hide");
-
     $.get(
         'https://bookbook-live.appspot.com/api/get_events',
     	{'arg' : 'withdraw'},
@@ -479,34 +475,34 @@ function loadSettings(){
 function showPage(page, arg){
     console.log('showPage:'+page+','+arg);
     loaded = $("#"+page).data("loaded");
-    console.log('showPage:'+page+','+arg+','+loaded);
     if(page=='event'){
-        _loadStart()
-        .then(_hidePage())
-        .then(_loadEvents(page, arg))
-        .then(_setEventCss())
-        .then(_showPage(page))
-        .then(_showFooter(page))
-        .then(_loadEnd());
-    }else if(loaded || page=='settings'){
-        //ページが読み込み済みor設定ページの場合、表示のみ
-        _loadStart()
-        .then(_hidePage())
-        .then(_showPage(page))
-        .then(_showFooter(page))
-        .then(_loadEnd());
+        _hidePage();
+        _loadEvents(page, arg);
+        _showPage(page);
+        _showFooter(page);
+    }else if(page=='settings'){
+        _hidePage();
+        _showPage('settings');
+        _showFooter('settings');
+    }else if(page=='user_schedule'){
+        _hidePage();
+        _loadEvents(page, arg);
+        setTimeout(function(){
+            _showPage(page);
+            _showFooter(page);
+        },1000);
+    }else if(loaded){
+        //ページが読み込み済み場合、表示のみ
+        _hidePage();
+        _showPage(page);
+        _showFooter(page);
     } else {
         //ページが読み込まれていない場合、読み込んで表示
-        $('#loading').show('fast',function(){
-            _loadStart()
-            .then(_hidePage())
-            .then(_loadEvents(page, arg))
-            .then(_setEventCss())
-            .then(_showPage(page))
-            .then(_showFooter(page))
-            .then(_loadEnd());
-            $("#"+page).data("loaded", true);
-        });
+        _hidePage();
+        _loadEvents(page, arg);
+        _showPage(page);
+        _showFooter(page);
+        $("#"+page).data("loaded", true);
     }
 }
 
@@ -514,15 +510,20 @@ function showPage(page, arg){
 function reloadEvents(){
     $(document).on('touchstart', '#contents', function(e){
         touchst = $(document).scrollTop();
+        touchmv = false;
+    });
+    $(document).on('touchmove', '#contents', function(e){
+        touchmv = true;
     });
     $(document).on('touchend', '#contents', function(e){
         touchen = $(document).scrollTop();
         scrollend = $(document).height()-$(window).height();
         if(currentPage!='settings'){
-            if(touchst==0 && touchen==0){
+            if(touchst==0 && touchen==0 && touchmv==true){
                 //ページ上端で引っ張って再読込
                 reloadPage(currentPage);
-            }else if(touchen==scrollend){
+                touchmv=false;
+            }else if(touchen==scrollend && touchmv==true){
                 //ページ下端で引っ張って再読込
                 loadNext(currentPage);
             }
@@ -535,17 +536,11 @@ function reloadPage(page){
     console.log("reloadPage:"+page);
     $('#reload').slideDown('fast' ,function(){
         if(page=='user_schedule'){
-            _loadStart()
-            .then(_loadEvents('user_schedule', user_schedule_name))
-            .then(_setEventCss())
-            .then(_loadEnd())
-            .then(setTimeout(function(){$('#reload').slideUp('fast')}, 300));
+            _loadEvents('user_schedule', user_schedule_name);
+//            setTimeout(function(){$('#reload').slideUp('fast')}, 300);
         }else{
-            _loadStart()
-            .then(_loadEvents(page))
-            .then(_setEventCss())
-            .then(_loadEnd())
-            .then(setTimeout(function(){$('#reload').slideUp('fast')}, 300));
+            _loadEvents(page);
+//            setTimeout(function(){$('#reload').slideUp('fast')}, 300);
         }
     });
 }
@@ -555,191 +550,178 @@ function loadNext(page, arg){
     cursor=$('#'+page+"_cursor").html();
     console.log('loadNext:'+page+','+cursor);
     if (cursor!=""){
-        _loadStart()
-        .then(_NextEvents(page, cursor));
+        _NextEvents(page, cursor);
     }
 }
 
-function _loadStart(){
-    return new Promise(function(resolve){
-        $('#loading').show();
-        resolve();
-    });
-}
 function _hidePage(){
-    return new Promise(function(resolve){
-        $('#settings').hide();
-        $('#schedule').hide();
-        $('#user_schedule').hide();
-        $('#timeline').hide();
-        $('#ranking').hide();
-        $('#favorite').hide();
-        $('#event').hide();
-        $('#follow').hide();
-        $('#past').hide();
-        $('#navbar_menu').hide();
-        $('#navbar_contents').hide();
-        $('#plus_btn').hide();
-        $(document).scrollTop(0);
-        resolve();
-    });
+    $('#settings').hide();
+    $('#schedule').hide();
+    $('#user_schedule').hide();
+    $('#user_schedule').html("");
+    $('#timeline').hide();
+    $('#ranking').hide();
+    $('#favorite').hide();
+    $('#event').hide();
+    $('#follow').hide();
+    $('#past').hide();
+    $('#navbar_menu').hide();
+    $('#navbar_contents').hide();
+    $('#navbar_contents').html("");
+    $('#plus_btn').hide();
+    $('#load_next').hide();
+    $(document).scrollTop(0);
 }
+
 function _loadEvents(page, arg){
-    console.log("_loadEvents:"+page+','+arg);
-    return new Promise(function(resolve){
-        if(page=='event'){
-            $.get(
-                'https://bookbook-live.appspot.com/api/get_events',
-                {'arg':'event', 'event_id':arg},
-                function(data){
-                    $('#navbar_contents').html($(data).filter("#list_title").html());
-                    $('#event').html($(data).filter("#events").html());
-                    //ツイートボタンを有効に
-                    twttr.widgets.load();
-                }
-            );
-        }else if(page=='user_schedule'){
-            $.get(
-                'https://bookbook-live.appspot.com/api/get_events',
-                {'arg':'user_schedule', 'user':arg},
-                function(data){
-                    $('#navbar_contents').html($(data).filter("#list_title").html());
-                    $('#user_schedule').html($(data).filter("#events").html());
-                	$('#user_schedule_cursor').html($(data).filter("#cursor").html());
-                    //ユーザー名を保存（リロード用）
-                    user_schedule_name = arg;
-                    //ツイートボタンの表示
-                    showTweetBtn();
-                }
-            );
-        }else{
-            $.get(
-                'https://bookbook-live.appspot.com/api/get_events',
-            	{'arg':page},
-        		function(data){
-                    //ビューへ読み込み
-                	$('#'+page).html($(data).filter("#events").html());
-            		$('#'+page+'_cursor').text($(data).filter("#cursor").html());
-                    $("#loading").hide();
-                }
-        	);
-        }
-        resolve();
-    });
+    $('#loading').show();
+    if(page=='event'){
+        $.get(
+            'https://bookbook-live.appspot.com/api/get_events',
+            {'arg':'event', 'event_id':arg},
+            function(data){
+                $('#navbar_contents').html($(data).filter("#list_title").html());
+                $('#event').html($(data).filter("#events").html());
+                //ツイートボタンを有効に
+                twttr.widgets.load();
+                _setEventCss();
+                $('#loading').hide();
+                setTimeout(function(){$('#reload').slideUp('fast')}, 300);
+            }
+        );
+    }else if(page=='user_schedule'){
+        $.get(
+            'https://bookbook-live.appspot.com/api/get_events',
+            {'arg':'user_schedule', 'user':arg},
+            function(data){
+                $('#navbar_contents').html($(data).filter("#list_title").html());
+                $('#user_schedule').html($(data).filter("#events").html());
+            	$('#user_schedule_cursor').html($(data).filter("#cursor").html());
+                //ユーザー名を保存（リロード用）
+                user_schedule_name = arg;
+                //ツイートボタンの表示
+                showTweetBtn();
+                _setEventCss();
+                $('#loading').hide();
+                setTimeout(function(){$('#reload').slideUp('fast')}, 300);
+            }
+        );
+    }else{
+        $.get(
+            'https://bookbook-live.appspot.com/api/get_events',
+        	{'arg':page},
+    		function(data){
+                //ビューへ読み込み
+            	$('#'+page).html($(data).filter("#events").html());
+        		$('#'+page+'_cursor').text($(data).filter("#cursor").html());
+                _setEventCss();
+                $("#loading").hide();
+                setTimeout(function(){$('#reload').slideUp('fast')}, 300);
+            }
+    	);
+    }
 }
 function _NextEvents(page, cursor){
-    return new Promise(function(resolve){
-        if(page=='user_schedule'){
-            $.get(
-                'https://bookbook-live.appspot.com/api/get_events',
-                {'arg':'user_schedule', 'user':user_schedule_name, 'cursor':cursor},
-                function(data){
-                    eventhtml = $(data).filter("#events").html();
-                    $('#navbar_contents').html($(data).filter("#list_title").html());
-                    $('#user_schedule').append(eventhtml);
-                    $('#user_schedule_cursor').html($(data).filter("#cursor").html());
-                }
-            );
-        }else{
-            $.get(
-                'https://bookbook-live.appspot.com/api/get_events',
-            	{'arg':page, 'cursor':cursor},
-        		function(data){
-                    eventhtml = $(data).filter("#events").html();
-                	$('#'+page).append(eventhtml);
-            		$('#'+page+'_cursor').text($(data).filter("#cursor").html());
-                }
-        	);
-        }
-        //追加読み込みを非表示に
-        if(eventhtml==""){
-            $('#'+page+'_cursor').html("");    
-            $("#load_next").slideUp("fast");
-        }
-        resolve();
-    });
+    $('#loading').show();
+    if(page=='user_schedule'){
+        $.get(
+            'https://bookbook-live.appspot.com/api/get_events',
+            {'arg':'user_schedule', 'user':user_schedule_name, 'cursor':cursor},
+            function(data){
+                eventhtml = $(data).filter("#events").html();
+                $('#navbar_contents').html($(data).filter("#list_title").html());
+                $('#user_schedule').append(eventhtml);
+                $('#user_schedule_cursor').html($(data).filter("#cursor").html());
+                _setEventCss();
+                $('#loading').hide();
+            }
+        );
+    }else{
+        $.get(
+            'https://bookbook-live.appspot.com/api/get_events',
+        	{'arg':page, 'cursor':cursor},
+    		function(data){
+                eventhtml = $(data).filter("#events").html();
+            	$('#'+page).append(eventhtml);
+        		$('#'+page+'_cursor').text($(data).filter("#cursor").html());
+                _setEventCss();
+                $('#loading').hide();
+            }
+    	);
+    }
+    //追加読み込みを非表示に
+    if(eventhtml==""){
+        $('#'+page+'_cursor').html("");    
+        $("#load_next").slideUp("fast");
+    }
 }
 function _setEventCss(){
-    return new Promise(function(resolve){
-        //追加ボタンのcss処理
-        $(".add:contains('-')").css('color', 'gray');
-        $(".add:contains('+')").css('color', '#1e90ff');
-        //お気に入りボタンのcss処理
-        $(".fav:contains('☆')").css('color', 'gray');
-        $(".fav:contains('★')").css('color', '#ffc800');
-        resolve();
-    });   
+    //追加ボタンのcss処理
+    $(".add:contains('-')").css('color', 'gray');
+    $(".add:contains('+')").css('color', '#1e90ff');
+    //お気に入りボタンのcss処理
+    $(".fav:contains('☆')").css('color', 'gray');
+    $(".fav:contains('★')").css('color', '#ffc800');
 }
-function _showPage(arg){
-    console.log('_showPage:'+arg);
-    return new Promise(function(resolve){
-        if(arg=='schedule'){
-            $('#schedule').show();
-            $("#logo").html("<b>BookLive</b>");
-            $('#navbar_menu').show();
-            $('#plus_btn').show();
-        }else if(arg=='timeline'){
-            $('#timeline').show();
-            $("#logo").html("タイムライン");
-            $('#navbar_menu').show();
-            $('#plus_btn').show();
-        }else if(arg='ranking'){
-            $('#ranking').show();
-            $("#logo").html("ランキング");
-            $('#navbar_menu').show();
-        }else if(arg='user_schedule'){
-            $('#user_schedule').show();
-            $('#navbar_contents').show();
-        }else if(arg=='favorite'){
-            $('#favorite').show();
-            $("#logo").html("お気に入り");
-            $('#navbar_menu').show();
-        }else if(arg=='event'){
-            $('#event').show();
-            $('#navbar_menu').show();
-        }else if(arg=='follow'){
-            $('#follow').show();
-            $("#logo").html("フォロー");
-            $('#navbar_menu').show();
-        }else if(arg=='past'){
-            $('#past').show();
-            $("#logo").html("過去のイベント");
-            $('#navbar_menu').show();
-        }else if(arg=='settings'){
-            $('#settings').show();
-            $("#logo").html("設定");
-            $('#navbar_menu').show();
-        }
+function _showPage(arg){    
+    if(arg=='schedule'){
+        $('#schedule').show();
+        $("#logo").html("<b>BookLive</b>");
+        $('#navbar_menu').show();
+        $('#plus_btn').show();
+    }else if(arg=='timeline'){
+        $('#timeline').show();
+        $("#logo").html("タイムライン");
+        $('#navbar_menu').show();
+        $('#plus_btn').show();
+    }else if(arg=='ranking'){
+        $('#ranking').show();
+        $("#logo").html("人気のイベント");
+        $('#navbar_menu').show();
+    }else if(arg=='user_schedule'){
+        $('#user_schedule').show();
+        $('#navbar_contents').show();
+    }else if(arg=='favorite'){
+        $('#favorite').show();
+        $("#logo").html("お気に入り");
+        $('#navbar_menu').show();
+    }else if(arg=='event'){
+        $('#event').show();
+        $('#navbar_menu').show();
+    }else if(arg=='follow'){
+        $('#follow').show();
+        $("#logo").html("フォロー");
+        $('#navbar_menu').show();
+    }else if(arg=='past'){
+        $('#past').show();
+        $("#logo").html("過去のイベント");
+        $('#navbar_menu').show();
+    }else if(arg=='settings'){
+        $('#settings').show();
+        $("#logo").html("設定");
+        $('#navbar_menu').show();
+    }else{
+        console.log("_showPage:arg is not defined.");
+    }
 
-        //追加読み込みの表示
-        if($("#"+arg+"_cursor").text()==""){
-            $('#load_next').hide();
-        }else{
-            $('#load_next').show();
-        }
-        
-        //現在のページを記憶しておく
-        currentPage = arg;
-        resolve();
-    });
+    //追加読み込みの表示
+    if($("#"+arg+"_cursor").text()){
+        $('#load_next').show();
+    }else{
+        $('#load_next').hide();
+    }
+    
+    //現在のページを記憶しておく
+    currentPage = arg;
 }
 function _showFooter(arg){
-    return new Promise(function(resolve){
-        $("#menu_schedule").css('color','#808080');
-        $("#menu_timeline").css('color','#808080');
-        $("#menu_ranking").css('color','#808080');
-        $("#menu_settings").css('color','#808080');            
-        if ($.inArray(arg,['schedule','timeline','ranking','settings'])>=0){
-            $("#menu_"+arg).css('color','#1e90ff');
-        }
-        resolve();
-    });
-}
-function _loadEnd(){
-    return new Promise(function(resolve){
-       // $('#loading').hide();
-        resolve();
-    });
+    $("#menu_schedule").css('color','#808080');
+    $("#menu_timeline").css('color','#808080');
+    $("#menu_ranking").css('color','#808080');
+    $("#menu_settings").css('color','#808080');            
+    if ($.inArray(arg,['schedule','timeline','ranking','settings'])>=0){
+        $("#menu_"+arg).css('color','#1e90ff');
+    }
 }
 
 //ツイートボタンの表示

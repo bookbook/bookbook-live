@@ -24,6 +24,7 @@ body {
 /*ヘッダ*/
 #header_navbar{
     padding-top: 16px;
+    height: 70px;
 }
 #logo{
     color: dodgerblue;
@@ -93,12 +94,15 @@ body {
 #loading{
     position:absolute;
 	left:50%;
-	top:30%;
+	top:40%;
 	margin-left:-20px;
     z-index: 1000;
 }
 
 /*イベント登録/編集モーダル*/
+.modal-top{
+    top: 19px;
+}
 .date_input{
     font-size: 16px;
 }
@@ -300,8 +304,6 @@ body {
 }
 
 /*フォローページ*/
-
-/*follow page*/
 .follow{
     margin-top: 10px;
 	margin-bottom: 5px;
@@ -320,4 +322,8 @@ body {
 	width: 100%;
 	border-bottom: 1px solid lightgrey;
     height: 10px;
+}
+/*設定ページ*/
+#settings{
+    padding-top: 10px;
 }
